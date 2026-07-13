@@ -3,114 +3,168 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Preview Codex pet animations, look directions, and atlas files in the browser."
+    />
     <title>Codex Pet Viewer</title>
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
     <main class="app-shell">
-      <aside class="sidebar" aria-label="Pet browser">
+      <aside class="sidebar" aria-label="Pet library">
         <div class="brand">
           <div class="brand-mark" aria-hidden="true">PV</div>
           <div>
             <h1>Pet Viewer</h1>
-            <p>Codex atlas previewer</p>
+            <p>for Codex pets</p>
           </div>
         </div>
 
+        <section aria-label="Loaded pets">
+          <div class="section-heading">
+            <h2>Library</h2>
+            <span id="petCount">1 pet</span>
+          </div>
+          <div class="pet-list" id="petList"></div>
+        </section>
+
         <section class="import-panel" aria-label="Import pets">
-          <form class="url-import" id="urlImport">
-            <label for="urlInput">Pet JSON URL</label>
-            <div>
-              <input id="urlInput" type="url" placeholder="https://..." />
-              <button type="submit">Load</button>
-            </div>
-          </form>
+          <div class="section-heading">
+            <h2>Import</h2>
+            <span>Local or URL</span>
+          </div>
 
           <label class="drop-zone" id="dropZone">
             <input id="directoryInput" type="file" webkitdirectory multiple />
             <span class="drop-icon" aria-hidden="true">+</span>
-            <strong>Open pet folder</strong>
-            <small>Choose a folder with pet.json and spritesheet.webp/png</small>
+            <span>
+              <strong>Open pet folder</strong>
+              <small>pet.json + spritesheet</small>
+            </span>
           </label>
 
           <label class="secondary-upload">
             <input id="fileInput" type="file" multiple accept=".json,.png,.webp" />
             Add loose files
           </label>
+
+          <form class="url-import" id="urlImport">
+            <label for="urlInput">Pet JSON URL</label>
+            <div>
+              <input id="urlInput" type="url" placeholder="https://.../pet.json" />
+              <button type="submit">Load</button>
+            </div>
+          </form>
         </section>
 
-        <section aria-label="Loaded pets">
-          <div class="section-heading">
-            <h2>Pets</h2>
-            <span id="petCount">1</span>
-          </div>
-          <div class="pet-list" id="petList"></div>
-        </section>
+        <footer class="sidebar-footer">
+          <span>192 x 208 cells</span>
+          <span>v1 + v2</span>
+        </footer>
       </aside>
 
       <section class="workspace">
-        <header class="toolbar" aria-label="Preview controls">
-          <div class="select-wrap">
-            <label for="stateSelect">State</label>
-            <select id="stateSelect"></select>
+        <header class="pet-header">
+          <div class="pet-title">
+            <p class="eyebrow" id="petId">noir</p>
+            <h2 id="petName">Noir</h2>
+            <p id="petDescription"></p>
           </div>
-
-          <div class="control-group" role="group" aria-label="Playback">
-            <button id="playButton" type="button" title="Play or pause animation" aria-label="Play or pause">Pause</button>
-            <label class="compact-control" for="speedRange">
-              <span>FPS</span>
-              <input id="speedRange" type="range" min="1" max="24" value="8" />
-              <output id="speedOutput">8</output>
-            </label>
-          </div>
-
-          <div class="control-group" role="group" aria-label="View options">
-            <label class="compact-control" for="zoomRange">
-              <span>Zoom</span>
-              <input id="zoomRange" type="range" min="1" max="4" step="0.25" value="2" />
-              <output id="zoomOutput">2x</output>
-            </label>
-            <button id="checkerButton" type="button" aria-pressed="true" title="Toggle checkerboard background">Grid</button>
-          </div>
+          <div class="pet-badges" id="petBadges" aria-label="Pet format"></div>
         </header>
 
-        <section class="action-panel" aria-label="Manual Codex action triggers">
-          <div class="section-heading">
-            <h2>Actions</h2>
-            <span>Manual trigger</span>
-          </div>
-          <div class="action-grid" id="actionGrid"></div>
-        </section>
-
-        <div class="content-grid">
+        <div class="viewer-grid">
           <section class="preview-panel" aria-label="Current pet preview">
+            <div class="panel-heading">
+              <div>
+                <p class="panel-kicker">Live preview</p>
+                <h2 id="stateReadout">Idle</h2>
+              </div>
+              <span class="frame-readout" id="frameReadout">Frame 1 / 6</span>
+            </div>
+
             <div class="preview-stage checker" id="previewStage">
               <canvas id="previewCanvas" width="192" height="208"></canvas>
               <div class="mouse-reticle" id="mouseReticle" aria-hidden="true"></div>
+              <output class="direction-readout" id="directionReadout" aria-live="polite"></output>
             </div>
-            <div class="frame-strip" id="frameStrip" aria-label="Frames"></div>
+
+            <div class="frame-strip" id="frameStrip" aria-label="Animation frames"></div>
           </section>
 
-          <aside class="details-panel" aria-label="Pet details">
-            <div>
-              <p class="eyebrow" id="petId">sample-pet</p>
-              <h2 id="petName">Sample Pet</h2>
-              <p id="petDescription">A generated sample atlas for trying the viewer.</p>
-            </div>
+          <aside class="control-panel" aria-label="Preview controls">
+            <section class="control-section" aria-label="Manual Codex action triggers">
+              <div class="section-heading">
+                <h2>Actions</h2>
+              </div>
+              <div class="action-grid" id="actionGrid"></div>
+            </section>
 
-            <dl class="meta-grid" id="metaGrid"></dl>
+            <section class="control-section playback-section" aria-label="Playback">
+              <div class="section-heading">
+                <h2>Playback</h2>
+                <button
+                  class="compact-button"
+                  id="playButton"
+                  type="button"
+                  title="Play or pause animation"
+                  aria-label="Play or pause"
+                >
+                  Pause
+                </button>
+              </div>
 
-            <div class="status-list" id="statusList"></div>
+              <label class="range-control" for="speedRange">
+                <span>Speed</span>
+                <input id="speedRange" type="range" min="0.5" max="2" step="0.25" value="1" />
+                <output id="speedOutput">1x</output>
+              </label>
+
+              <label class="select-control" for="stateSelect">
+                <span>State</span>
+                <select id="stateSelect"></select>
+              </label>
+            </section>
+
+            <section class="control-section" aria-label="View options">
+              <div class="section-heading">
+                <h2>View</h2>
+                <button
+                  class="compact-button"
+                  id="checkerButton"
+                  type="button"
+                  aria-pressed="true"
+                  title="Toggle checkerboard background"
+                >
+                  Grid on
+                </button>
+              </div>
+
+              <label class="range-control" for="zoomRange">
+                <span>Zoom</span>
+                <input id="zoomRange" type="range" min="1" max="3" step="0.25" value="2" />
+                <output id="zoomOutput">2x</output>
+              </label>
+            </section>
+
+            <section class="control-section pet-details" aria-label="Pet details">
+              <dl class="meta-grid" id="metaGrid"></dl>
+              <div class="status-list" id="statusList"></div>
+            </section>
           </aside>
         </div>
 
         <section class="atlas-section" aria-label="Spritesheet atlas">
-          <div class="section-heading">
-            <h2>Atlas</h2>
+          <div class="atlas-heading">
+            <div>
+              <p class="panel-kicker">Frame map</p>
+              <h2>Atlas inspector</h2>
+            </div>
             <span id="atlasSize">1536 x 2288</span>
           </div>
           <div class="atlas-scroll">
-            <div class="atlas-grid checker" id="atlasGrid"></div>
+            <div class="atlas-grid" id="atlasGrid"></div>
           </div>
         </section>
       </section>

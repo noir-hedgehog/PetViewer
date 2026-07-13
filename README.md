@@ -1,6 +1,6 @@
 # Codex Pet Viewer
 
-A tiny static browser for Codex pet atlases. It loads `pet.json` plus `spritesheet.webp` or `spritesheet.png`, previews each animation row, and checks the basic atlas contract.
+A tiny static browser for Codex pet atlases. It loads `pet.json` plus `spritesheet.webp` or `spritesheet.png`, previews each animation row, and checks the basic atlas contract. The bundled Noir v2 pet is shown by default.
 
 ## Use
 
@@ -9,9 +9,10 @@ Open `index.html` in a browser.
 - Paste a `pet.json` URL and load it online. `spritesheetPath` is resolved relative to that JSON URL.
 - Choose a pet folder that contains `pet.json` and a spritesheet.
 - Or drag loose `.json`, `.webp`, and `.png` files into the import area.
-- Move the mouse over the preview stage to inspect v2 look-direction cells directly.
+- Move the mouse over the preview stage to inspect all 16 v2 look directions directly.
 - Trigger the default Codex actions manually from the action panel or number keys `1` through `9`.
-- Use the state picker, frame strip, atlas cells, playback speed, zoom, and checkerboard toggle for manual inspection.
+- Use the state picker, frame strip, row-based atlas inspector, playback speed, zoom, and checkerboard toggle for manual inspection.
+- Transparent trailing slots are detected and excluded from playback. If pixel inspection is blocked by a remote host, the Codex standard frame counts are used instead.
 
 ## GitHub Pages
 
@@ -35,4 +36,10 @@ The viewer assumes Codex cells are `192 x 208`.
 - v2 atlas: `8 x 11`, `1536 x 2288`
 - v2 rows 9 and 10 contain the 16 look directions from `000` through `337.5`
 
+Standard animation rows use their Codex frame counts and timing, including shorter waving, jumping, waiting, working, and review rows. Imported atlases can still use additional populated cells; the viewer detects them automatically when browser security permits pixel inspection.
+
 This tool only previews and validates dimensions; it does not generate, repair, or package pets.
+
+## Bundled Pet
+
+Noir is bundled from [noir-hedgehog/about-noir](https://github.com/noir-hedgehog/about-noir) and remains a regular Codex v2 package under `assets/noir/`. It is loaded through the same manifest and atlas path used by imported pets.

@@ -5,23 +5,77 @@ const V2_ROWS = 11;
 const V1_ROWS = 9;
 
 const STATES = [
-  { id: "idle", label: "Idle", row: 0, frames: 8 },
-  { id: "running-right", label: "Running right", row: 1, frames: 8 },
-  { id: "running-left", label: "Running left", row: 2, frames: 8 },
-  { id: "waving", label: "Waving", row: 3, frames: 8 },
-  { id: "jumping", label: "Jumping", row: 4, frames: 8 },
-  { id: "failed", label: "Failed", row: 5, frames: 8 },
-  { id: "waiting", label: "Waiting", row: 6, frames: 8 },
-  { id: "running", label: "Working", row: 7, frames: 8 },
-  { id: "review", label: "Review", row: 8, frames: 8 },
-  { id: "look-a", label: "Look 000-157.5", row: 9, frames: 8, v2: true },
-  { id: "look-b", label: "Look 180-337.5", row: 10, frames: 8, v2: true },
+  {
+    id: "idle",
+    label: "Idle",
+    row: 0,
+    defaultFrames: 6,
+    durations: [280, 110, 110, 140, 140, 320],
+  },
+  {
+    id: "running-right",
+    label: "Running right",
+    row: 1,
+    defaultFrames: 8,
+    durations: [120, 120, 120, 120, 120, 120, 120, 220],
+  },
+  {
+    id: "running-left",
+    label: "Running left",
+    row: 2,
+    defaultFrames: 8,
+    durations: [120, 120, 120, 120, 120, 120, 120, 220],
+  },
+  {
+    id: "waving",
+    label: "Waving",
+    row: 3,
+    defaultFrames: 4,
+    durations: [140, 140, 140, 280],
+  },
+  {
+    id: "jumping",
+    label: "Jumping",
+    row: 4,
+    defaultFrames: 5,
+    durations: [140, 140, 140, 140, 280],
+  },
+  {
+    id: "failed",
+    label: "Failed",
+    row: 5,
+    defaultFrames: 8,
+    durations: [140, 140, 140, 140, 140, 140, 140, 240],
+  },
+  {
+    id: "waiting",
+    label: "Waiting",
+    row: 6,
+    defaultFrames: 6,
+    durations: [150, 150, 150, 150, 150, 260],
+  },
+  {
+    id: "running",
+    label: "Working",
+    row: 7,
+    defaultFrames: 6,
+    durations: [120, 120, 120, 120, 120, 220],
+  },
+  {
+    id: "review",
+    label: "Review",
+    row: 8,
+    defaultFrames: 6,
+    durations: [150, 150, 150, 150, 150, 280],
+  },
+  { id: "look-a", label: "Look 000-157.5", row: 9, defaultFrames: 8, v2: true },
+  { id: "look-b", label: "Look 180-337.5", row: 10, defaultFrames: 8, v2: true },
 ];
 
 const ACTION_STATES = [
   { id: "idle", label: "Idle", shortcut: "1" },
-  { id: "running-right", label: "Run right", shortcut: "2" },
-  { id: "running-left", label: "Run left", shortcut: "3" },
+  { id: "running-right", label: "Right", shortcut: "2" },
+  { id: "running-left", label: "Left", shortcut: "3" },
   { id: "waving", label: "Wave", shortcut: "4" },
   { id: "jumping", label: "Jump", shortcut: "5" },
   { id: "failed", label: "Fail", shortcut: "6" },
@@ -49,6 +103,34 @@ const DIRECTION_LABELS = [
   "337.5",
 ];
 
+const DIRECTION_NAMES = [
+  "Up",
+  "Up-right",
+  "Up-right",
+  "Up-right",
+  "Right",
+  "Down-right",
+  "Down-right",
+  "Down-right",
+  "Down",
+  "Down-left",
+  "Down-left",
+  "Down-left",
+  "Left",
+  "Up-left",
+  "Up-left",
+  "Up-left",
+];
+
+const DEFAULT_PET = {
+  id: "noir",
+  displayName: "Noir",
+  description:
+    "A sweet, quietly mischievous black-and-cream hedgehog with luminous golden eyes and tiny paws.",
+  spriteVersionNumber: 2,
+  spritesheetPath: "spritesheet.webp",
+};
+
 const elements = {
   urlImport: document.querySelector("#urlImport"),
   urlInput: document.querySelector("#urlInput"),
@@ -67,11 +149,15 @@ const elements = {
   checkerButton: document.querySelector("#checkerButton"),
   previewStage: document.querySelector("#previewStage"),
   mouseReticle: document.querySelector("#mouseReticle"),
+  directionReadout: document.querySelector("#directionReadout"),
   previewCanvas: document.querySelector("#previewCanvas"),
   frameStrip: document.querySelector("#frameStrip"),
+  stateReadout: document.querySelector("#stateReadout"),
+  frameReadout: document.querySelector("#frameReadout"),
   petId: document.querySelector("#petId"),
   petName: document.querySelector("#petName"),
   petDescription: document.querySelector("#petDescription"),
+  petBadges: document.querySelector("#petBadges"),
   metaGrid: document.querySelector("#metaGrid"),
   statusList: document.querySelector("#statusList"),
   atlasSize: document.querySelector("#atlasSize"),
@@ -86,7 +172,7 @@ const app = {
   stateId: "idle",
   frame: 0,
   playing: true,
-  fps: 8,
+  speed: 1,
   zoom: 2,
   checker: true,
   mousePreview: null,
@@ -97,15 +183,29 @@ const app = {
 initialize();
 
 async function initialize() {
-  elements.stateSelect.innerHTML = STATES.map(
-    (state) => `<option value="${state.id}">${state.label}</option>`,
-  ).join("");
-
   wireEvents();
-  await addSamplePet();
-  await loadPetFromUrlParams();
-  selectPet(app.pets[0].id);
-  animationLoop(0);
+  let animationStarted = false;
+
+  try {
+    await addDefaultPet();
+  } catch (error) {
+    showStatusMessage(error.message, "fail");
+  }
+
+  if (app.pets[0]) {
+    selectPet(app.pets[0].id);
+    app.lastTick = performance.now();
+    animationLoop(0);
+    animationStarted = true;
+  }
+
+  const linkedPet = await loadPetFromUrlParams();
+  if (linkedPet) selectPet(linkedPet.id);
+
+  if (!animationStarted && linkedPet) {
+    app.lastTick = performance.now();
+    animationLoop(0);
+  }
 }
 
 function wireEvents() {
@@ -116,7 +216,7 @@ function wireEvents() {
 
     try {
       const pet = await buildPetFromJsonUrl(url);
-      app.pets = [...app.pets.filter((candidate) => !candidate.sample), pet];
+      addOrReplacePet(pet);
       selectPet(pet.id);
     } catch (error) {
       showStatusMessage(error.message, "fail");
@@ -153,36 +253,39 @@ function wireEvents() {
 
   elements.stateSelect.addEventListener("change", () => {
     app.stateId = elements.stateSelect.value;
-    app.frame = 0;
+    app.frame = getFrameIndexes(getActiveState(), getActivePet())[0] || 0;
+    app.lastTick = performance.now();
     renderAll();
   });
 
   elements.playButton.addEventListener("click", () => {
     app.playing = !app.playing;
+    app.lastTick = performance.now();
     elements.playButton.textContent = app.playing ? "Pause" : "Play";
   });
 
   elements.speedRange.addEventListener("input", () => {
-    app.fps = Number(elements.speedRange.value);
-    elements.speedOutput.value = app.fps;
+    app.speed = Number(elements.speedRange.value);
+    elements.speedOutput.value = formatMultiplier(app.speed);
+    app.lastTick = performance.now();
   });
 
   elements.zoomRange.addEventListener("input", () => {
     app.zoom = Number(elements.zoomRange.value);
-    elements.zoomOutput.value = `${app.zoom}x`;
     sizePreviewCanvas();
   });
 
   elements.checkerButton.addEventListener("click", () => {
     app.checker = !app.checker;
     elements.previewStage.classList.toggle("checker", app.checker);
-    elements.atlasGrid.classList.toggle("checker", app.checker);
+    elements.atlasGrid.classList.toggle("plain", !app.checker);
     elements.checkerButton.setAttribute("aria-pressed", String(app.checker));
+    elements.checkerButton.textContent = app.checker ? "Grid on" : "Grid off";
   });
 
   elements.previewStage.addEventListener("pointerenter", (event) => {
     const pet = getActivePet();
-    if (!pet || pet.spriteVersionNumber < 2) return;
+    if (!pet || pet.spriteVersionNumber < 2 || pet.rows < V2_ROWS) return;
 
     app.mousePreview = {
       stateId: app.stateId,
@@ -195,8 +298,7 @@ function wireEvents() {
   });
 
   elements.previewStage.addEventListener("pointermove", (event) => {
-    if (!app.mousePreview) return;
-    updateMousePreview(event);
+    if (app.mousePreview) updateMousePreview(event);
   });
 
   elements.previewStage.addEventListener("pointerleave", () => {
@@ -206,7 +308,9 @@ function wireEvents() {
     app.frame = app.mousePreview.frame;
     app.playing = app.mousePreview.playing;
     app.mousePreview = null;
+    elements.directionReadout.value = "";
     elements.previewStage.classList.remove("mouse-active");
+    app.lastTick = performance.now();
     renderAll();
   });
 
@@ -226,28 +330,59 @@ function wireEvents() {
   });
 }
 
-async function importFiles(files) {
-  const imported = await buildPetsFromFiles(files);
-  if (!imported.length) {
-    showStatusMessage("No pet.json or spritesheet image was found.", "warn");
-    return;
+async function addDefaultPet() {
+  const manifestUrl = new URL("assets/noir/pet.json", window.location.href);
+  let manifest = DEFAULT_PET;
+
+  try {
+    const response = await fetch(manifestUrl);
+    if (response.ok) manifest = await response.json();
+  } catch {
+    // Direct file access can block fetch while still allowing the image to load.
   }
 
-  app.pets = [...app.pets.filter((pet) => !pet.sample), ...imported];
-  selectPet(imported[0].id);
+  const imageUrl = new URL(manifest.spritesheetPath, manifestUrl).href;
+  const image = await loadImage(imageUrl);
+  app.pets.push(
+    normalizePet({
+      root: manifest.displayName,
+      manifest,
+      image,
+      imageUrl,
+      fileName: manifest.spritesheetPath,
+      bundled: true,
+    }),
+  );
+}
+
+async function importFiles(files) {
+  try {
+    const imported = await buildPetsFromFiles(files);
+    if (!imported.length) {
+      showStatusMessage("No pet.json or spritesheet image was found.", "warn");
+      return;
+    }
+
+    imported.forEach(addOrReplacePet);
+    selectPet(imported[0].id);
+  } catch (error) {
+    showStatusMessage(error.message, "fail");
+  }
 }
 
 async function loadPetFromUrlParams() {
   const params = new URLSearchParams(window.location.search);
   const petUrl = params.get("pet") || params.get("petJson");
-  if (!petUrl) return;
+  if (!petUrl) return null;
 
   try {
     const pet = await buildPetFromJsonUrl(petUrl);
-    app.pets = [...app.pets.filter((candidate) => !candidate.sample), pet];
+    addOrReplacePet(pet);
     elements.urlInput.value = petUrl;
+    return pet;
   } catch (error) {
     showStatusMessage(error.message, "fail");
+    return null;
   }
 }
 
@@ -261,17 +396,11 @@ async function buildPetFromJsonUrl(petJsonUrl) {
   const manifest = await response.json();
   const sheetPath = manifest.spritesheetPath || manifest.spritesheet || "spritesheet.webp";
   const imageUrl = new URL(sheetPath, url).href;
-  const image = await loadImage(imageUrl);
+  const image = await loadRemoteImage(imageUrl);
   const pathParts = url.pathname.split("/").filter(Boolean);
   const root = manifest.displayName || manifest.id || pathParts.at(-2) || "Remote pet";
 
-  return normalizePet({
-    root,
-    manifest,
-    image,
-    imageUrl,
-    fileName: sheetPath,
-  });
+  return normalizePet({ root, manifest, image, imageUrl, fileName: sheetPath });
 }
 
 async function buildPetsFromFiles(files) {
@@ -305,7 +434,7 @@ async function buildPetsFromFiles(files) {
 
     const manifestPath = manifest.spritesheetPath || manifest.spritesheet || "";
     const preferredImage =
-      imageFiles.find((file) => file.webkitRelativePath.endsWith(manifestPath)) ||
+      imageFiles.find((file) => (file.webkitRelativePath || file.name).endsWith(manifestPath)) ||
       imageFiles.find((file) => /spritesheet/i.test(file.name)) ||
       imageFiles[0];
 
@@ -319,11 +448,16 @@ async function buildPetsFromFiles(files) {
   return pets;
 }
 
-function normalizePet({ root, manifest, image, imageUrl, fileName, sample = false }) {
+function normalizePet({ root, manifest, image, imageUrl, fileName, bundled = false }) {
   const rows = Math.round(image.naturalHeight / CELL_HEIGHT);
+  const columns = Math.round(image.naturalWidth / CELL_WIDTH);
   const version = manifest.spriteVersionNumber || (rows >= V2_ROWS ? 2 : 1);
   const id = manifest.id || slugify(root || fileName || "pet");
-  const instanceId = globalThis.crypto?.randomUUID ? crypto.randomUUID() : String(Date.now());
+  const instanceId = bundled
+    ? "bundled"
+    : globalThis.crypto?.randomUUID
+      ? crypto.randomUUID()
+      : String(Date.now());
 
   return {
     id: `${id}-${instanceId}`,
@@ -337,129 +471,67 @@ function normalizePet({ root, manifest, image, imageUrl, fileName, sample = fals
     width: image.naturalWidth,
     height: image.naturalHeight,
     rows,
-    columns: Math.round(image.naturalWidth / CELL_WIDTH),
-    sample,
+    columns,
+    frameIndexesByRow: detectPopulatedFrames(image, rows, columns),
+    bundled,
   };
 }
 
-async function addSamplePet() {
-  const canvas = document.createElement("canvas");
-  canvas.width = CELL_WIDTH * COLUMNS;
-  canvas.height = CELL_HEIGHT * V2_ROWS;
-  const sampleCtx = canvas.getContext("2d");
+function detectPopulatedFrames(image, rows, columns) {
+  if (columns < 1 || rows < 1) return null;
 
-  for (let row = 0; row < V2_ROWS; row += 1) {
-    for (let col = 0; col < COLUMNS; col += 1) {
-      drawSampleCell(sampleCtx, row, col);
+  try {
+    const canvas = document.createElement("canvas");
+    canvas.width = image.naturalWidth;
+    canvas.height = image.naturalHeight;
+    const analysisCtx = canvas.getContext("2d", { willReadFrequently: true });
+    analysisCtx.drawImage(image, 0, 0);
+    const pixels = analysisCtx.getImageData(0, 0, canvas.width, canvas.height).data;
+    const populated = [];
+
+    for (let row = 0; row < rows; row += 1) {
+      const frameIndexes = [];
+      for (let col = 0; col < Math.min(columns, COLUMNS); col += 1) {
+        if (cellHasVisiblePixels(pixels, canvas.width, row, col)) frameIndexes.push(col);
+      }
+      populated.push(frameIndexes);
+    }
+
+    return populated;
+  } catch {
+    return null;
+  }
+}
+
+function cellHasVisiblePixels(pixels, imageWidth, row, col) {
+  const startX = col * CELL_WIDTH;
+  const startY = row * CELL_HEIGHT;
+
+  for (let y = startY; y < startY + CELL_HEIGHT; y += 4) {
+    for (let x = startX; x < startX + CELL_WIDTH; x += 4) {
+      if (pixels[(y * imageWidth + x) * 4 + 3] > 8) return true;
     }
   }
-
-  const imageUrl = canvas.toDataURL("image/png");
-  const image = await loadImage(imageUrl);
-  app.pets.push(
-    normalizePet({
-      root: "Sample Pet",
-      manifest: {
-        id: "sample-pet",
-        displayName: "Sample Pet",
-        description: "A generated sample atlas for trying the viewer.",
-        spriteVersionNumber: 2,
-        spritesheetPath: "generated-sample.png",
-      },
-      image,
-      imageUrl,
-      fileName: "generated-sample.png",
-      sample: true,
-    }),
-  );
+  return false;
 }
 
-function drawSampleCell(sampleCtx, row, col) {
-  const x = col * CELL_WIDTH;
-  const y = row * CELL_HEIGHT;
-  const cx = x + CELL_WIDTH / 2;
-  const baseY = y + 128 + Math.sin((col / COLUMNS) * Math.PI * 2) * rowMotion(row);
-  const lean = stateLean(row, col);
-  const direction = row >= 9 ? DIRECTION_LABELS[(row - 9) * COLUMNS + col] : "";
-  const hue = 170 + row * 8;
-
-  sampleCtx.save();
-  sampleCtx.translate(cx + lean, baseY);
-
-  sampleCtx.fillStyle = `hsl(${hue}, 46%, 40%)`;
-  sampleCtx.beginPath();
-  sampleCtx.ellipse(0, 12, 44, 52, 0, 0, Math.PI * 2);
-  sampleCtx.fill();
-
-  sampleCtx.fillStyle = `hsl(${hue + 16}, 58%, 62%)`;
-  sampleCtx.beginPath();
-  sampleCtx.ellipse(0, -26, 38, 34, 0, 0, Math.PI * 2);
-  sampleCtx.fill();
-
-  sampleCtx.strokeStyle = "#26302d";
-  sampleCtx.lineWidth = 5;
-  sampleCtx.lineCap = "round";
-  sampleCtx.beginPath();
-  sampleCtx.moveTo(-20, 2);
-  sampleCtx.lineTo(-42 - lean * 0.2, 18 + Math.sin(col) * 8);
-  sampleCtx.moveTo(20, 2);
-  sampleCtx.lineTo(42 - lean * 0.2, 18 + Math.cos(col) * 8);
-  sampleCtx.stroke();
-
-  const gaze = direction ? gazeOffset(direction) : { x: row === 1 ? 5 : row === 2 ? -5 : 0, y: 0 };
-  sampleCtx.fillStyle = "#f7fbf8";
-  sampleCtx.beginPath();
-  sampleCtx.arc(-14, -32, 9, 0, Math.PI * 2);
-  sampleCtx.arc(14, -32, 9, 0, Math.PI * 2);
-  sampleCtx.fill();
-
-  sampleCtx.fillStyle = "#18211f";
-  sampleCtx.beginPath();
-  sampleCtx.arc(-14 + gaze.x, -32 + gaze.y, 4, 0, Math.PI * 2);
-  sampleCtx.arc(14 + gaze.x, -32 + gaze.y, 4, 0, Math.PI * 2);
-  sampleCtx.fill();
-
-  sampleCtx.strokeStyle = "#18211f";
-  sampleCtx.lineWidth = 4;
-  sampleCtx.beginPath();
-  sampleCtx.arc(0, -18, row === 5 ? 12 : 10, 0.15 * Math.PI, 0.85 * Math.PI);
-  sampleCtx.stroke();
-
-  sampleCtx.restore();
-}
-
-function rowMotion(row) {
-  if (row === 0) return 3;
-  if (row === 4) return 22;
-  if (row === 7) return 7;
-  return 10;
-}
-
-function stateLean(row, col) {
-  if (row === 1) return 10 + Math.sin(col * Math.PI) * 4;
-  if (row === 2) return -10 + Math.sin(col * Math.PI) * 4;
-  if (row === 3) return Math.sin(col * 1.4) * 5;
-  return Math.sin(col * 0.8 + row) * 3;
-}
-
-function gazeOffset(direction) {
-  const degrees = Number(direction);
-  const radians = ((degrees - 90) * Math.PI) / 180;
-  return {
-    x: Math.cos(radians) * 5,
-    y: Math.sin(radians) * 5,
-  };
+function addOrReplacePet(pet) {
+  app.pets = [...app.pets.filter((candidate) => candidate.petId !== pet.petId), pet];
 }
 
 function selectPet(id) {
   app.activePetId = id;
-  app.frame = 0;
+  app.stateId = "idle";
+  app.frame = getFrameIndexes(STATES[0], getActivePet())[0] || 0;
+  app.lastTick = performance.now();
+  elements.atlasGrid.dataset.petId = "";
   renderAll();
 }
 
 function renderAll() {
   renderPetList();
   renderDetails();
+  ensureActiveFrame();
   renderActionGrid();
   renderFrameStrip();
   renderAtlas();
@@ -467,14 +539,20 @@ function renderAll() {
 }
 
 function triggerAction(stateId) {
+  const state = STATES.find((candidate) => candidate.id === stateId);
+  const pet = getActivePet();
+  if (!state || state.row >= pet.rows) return;
+
   app.stateId = stateId;
-  app.frame = 0;
+  app.frame = getFrameIndexes(state, pet)[0] || 0;
   app.playing = true;
+  app.lastTick = performance.now();
   elements.playButton.textContent = "Pause";
   renderAll();
 }
 
 function renderActionGrid() {
+  const pet = getActivePet();
   elements.actionGrid.innerHTML = "";
 
   for (const action of ACTION_STATES) {
@@ -483,15 +561,16 @@ function renderActionGrid() {
     button.type = "button";
     button.className = `action-button${app.stateId === action.id ? " active" : ""}`;
     button.title = `Trigger ${state.label}`;
+    button.disabled = state.row >= pet.rows;
     button.setAttribute("aria-pressed", String(app.stateId === action.id));
     button.addEventListener("click", () => triggerAction(action.id));
-    button.innerHTML = `<strong>${escapeHtml(action.label)}</strong><span>${escapeHtml(action.shortcut)}</span>`;
+    button.innerHTML = `<strong>${escapeHtml(action.label)}</strong>`;
     elements.actionGrid.append(button);
   }
 }
 
 function renderPetList() {
-  elements.petCount.textContent = String(app.pets.length);
+  elements.petCount.textContent = `${app.pets.length} ${app.pets.length === 1 ? "pet" : "pets"}`;
   elements.petList.innerHTML = "";
 
   for (const pet of app.pets) {
@@ -503,7 +582,7 @@ function renderPetList() {
     const thumb = document.createElement("div");
     thumb.className = "pet-thumb checker";
     thumb.style.backgroundImage = `url("${pet.imageUrl}")`;
-    thumb.style.backgroundSize = `${(pet.width / CELL_WIDTH) * 48}px ${(pet.height / CELL_HEIGHT) * 52}px`;
+    thumb.style.backgroundSize = `${pet.columns * 46}px ${pet.rows * 50}px`;
     thumb.style.backgroundPosition = "0 0";
 
     const text = document.createElement("div");
@@ -515,7 +594,7 @@ function renderPetList() {
 
 function renderDetails() {
   const pet = getActivePet();
-  const availableStates = STATES.filter((state) => !state.v2 || pet.spriteVersionNumber >= 2);
+  const availableStates = STATES.filter((state) => state.row < pet.rows);
 
   elements.stateSelect.innerHTML = availableStates
     .map((state) => `<option value="${state.id}">${state.label}</option>`)
@@ -529,10 +608,20 @@ function renderDetails() {
   elements.petDescription.textContent = pet.description;
   elements.atlasSize.textContent = `${pet.width} x ${pet.height}`;
 
+  const expectedRows = pet.spriteVersionNumber >= 2 ? V2_ROWS : V1_ROWS;
+  const dimensionMatch = pet.columns === COLUMNS && pet.rows === expectedRows;
+  elements.petBadges.innerHTML = [
+    `<span class="badge ok">Codex v${pet.spriteVersionNumber}</span>`,
+    `<span class="badge${dimensionMatch ? " ok" : ""}">${pet.columns} x ${pet.rows} atlas</span>`,
+  ].join("");
+
+  const populatedCells = pet.frameIndexesByRow
+    ? pet.frameIndexesByRow.reduce((total, indexes) => total + indexes.length, 0)
+    : null;
   const meta = [
-    ["Version", `v${pet.spriteVersionNumber}`],
-    ["Cells", `${pet.columns} x ${pet.rows}`],
-    ["Cell size", `${CELL_WIDTH} x ${CELL_HEIGHT}`],
+    ["Cell", `${CELL_WIDTH} x ${CELL_HEIGHT}`],
+    ["Frames", populatedCells ?? "Standard"],
+    ["Rows", pet.rows],
     ["Image", pet.spritesheetPath],
   ];
 
@@ -553,7 +642,7 @@ function getAtlasStatuses(pet) {
   const statuses = [];
   statuses.push(
     pet.width === CELL_WIDTH * COLUMNS
-      ? { kind: "ok", text: "Width matches the 8-column Codex atlas contract." }
+      ? { kind: "ok", text: "Width matches the 8-column Codex atlas." }
       : { kind: "fail", text: "Width does not match 8 columns of 192px cells." },
   );
 
@@ -561,73 +650,108 @@ function getAtlasStatuses(pet) {
   statuses.push(
     pet.rows === expectedRows
       ? { kind: "ok", text: `Height matches the v${pet.spriteVersionNumber} row contract.` }
-      : { kind: "warn", text: `Detected ${pet.rows} rows; expected ${expectedRows} for this version.` },
+      : { kind: "warn", text: `Detected ${pet.rows} rows; expected ${expectedRows}.` },
   );
 
   statuses.push(
-    pet.spriteVersionNumber >= 2
-      ? { kind: "ok", text: "Look-direction rows are available." }
-      : { kind: "warn", text: "v1 atlas: look-direction rows are not present." },
+    pet.frameIndexesByRow
+      ? { kind: "ok", text: "Transparent slots are excluded from playback." }
+      : { kind: "warn", text: "Using standard frame counts; pixel inspection was unavailable." },
   );
 
   return statuses;
 }
 
 function renderFrameStrip() {
+  const pet = getActivePet();
   const state = getActiveState();
+  const frameIndexes = getFrameIndexes(state, pet);
   elements.frameStrip.innerHTML = "";
 
-  for (let index = 0; index < state.frames; index += 1) {
+  for (const frameIndex of frameIndexes) {
     const button = document.createElement("button");
     button.type = "button";
-    button.className = `frame-button${index === app.frame ? " active" : ""}`;
-    button.title = getFrameLabel(state, index);
+    button.className = `frame-button${frameIndex === app.frame ? " active" : ""}`;
+    button.title = getFrameLabel(state, frameIndex);
     button.addEventListener("click", () => {
-      app.frame = index;
+      app.frame = frameIndex;
+      app.playing = false;
+      app.lastTick = performance.now();
+      elements.playButton.textContent = "Play";
       renderFrameStrip();
-      renderAtlas();
+      updateAtlasSelection();
       drawCurrentFrame();
     });
 
     const canvas = document.createElement("canvas");
     canvas.width = CELL_WIDTH;
     canvas.height = CELL_HEIGHT;
-    const thumbCtx = canvas.getContext("2d");
-    drawFrameToContext(thumbCtx, getActivePet(), state.row, index);
+    drawFrameToContext(canvas.getContext("2d"), pet, state.row, frameIndex);
     button.append(canvas);
     elements.frameStrip.append(button);
   }
+
+  updatePreviewReadouts(state, frameIndexes);
 }
 
 function renderAtlas() {
   const pet = getActivePet();
-  const scale = 0.5;
-  const width = pet.width * scale;
-  const height = pet.height * scale;
+  if (elements.atlasGrid.dataset.petId !== pet.id) {
+    elements.atlasGrid.innerHTML = "";
 
-  elements.atlasGrid.style.width = `${width}px`;
-  elements.atlasGrid.style.height = `${height}px`;
-  elements.atlasGrid.style.minWidth = `${width}px`;
-  elements.atlasGrid.style.backgroundImage = `url("${pet.imageUrl}")`;
-  elements.atlasGrid.style.backgroundSize = `${width}px ${height}px`;
-  elements.atlasGrid.innerHTML = "";
+    for (let row = 0; row < pet.rows; row += 1) {
+      const state = STATES.find((candidate) => candidate.row === row);
+      const frameIndexes = state
+        ? getFrameIndexes(state, pet)
+        : Array.from({ length: Math.min(pet.columns, COLUMNS) }, (_, index) => index);
+      const populated = new Set(frameIndexes);
+      const rowElement = document.createElement("div");
+      rowElement.className = "atlas-row";
 
-  const state = getActiveState();
-  for (let row = 0; row < pet.rows; row += 1) {
-    for (let col = 0; col < COLUMNS; col += 1) {
-      const cell = document.createElement("button");
-      cell.type = "button";
-      cell.className = `atlas-cell${row === state.row && col === app.frame ? " active" : ""}`;
-      cell.style.left = `${col * CELL_WIDTH * scale}px`;
-      cell.style.top = `${row * CELL_HEIGHT * scale}px`;
-      cell.style.width = `${CELL_WIDTH * scale}px`;
-      cell.style.height = `${CELL_HEIGHT * scale}px`;
-      cell.title = `Row ${row}, frame ${col}`;
-      cell.setAttribute("aria-label", `Show row ${row}, frame ${col}`);
-      cell.addEventListener("click", () => selectCell(row, col));
-      elements.atlasGrid.append(cell);
+      const label = document.createElement("div");
+      label.className = "atlas-row-label";
+      const rowName = state?.label || `Row ${row}`;
+      const rowMeta = row >= 9 ? `${frameIndexes.length} directions` : `${frameIndexes.length} frames`;
+      label.innerHTML = `<strong>${escapeHtml(rowName)}</strong><span>Row ${row} · ${rowMeta}</span>`;
+      rowElement.append(label);
+
+      for (let col = 0; col < COLUMNS; col += 1) {
+        const cell = document.createElement("button");
+        cell.type = "button";
+        cell.className = `atlas-cell${populated.has(col) ? "" : " empty"}`;
+        cell.dataset.row = String(row);
+        cell.dataset.col = String(col);
+        cell.dataset.frame = String(col);
+        cell.title = state ? getFrameLabel(state, col) : `Row ${row}, frame ${col + 1}`;
+        cell.setAttribute("aria-label", cell.title);
+        cell.addEventListener("click", () => selectCell(row, col));
+
+        const canvas = document.createElement("canvas");
+        canvas.width = CELL_WIDTH;
+        canvas.height = CELL_HEIGHT;
+        drawFrameToContext(canvas.getContext("2d"), pet, row, col);
+        cell.append(canvas);
+        rowElement.append(cell);
+      }
+
+      elements.atlasGrid.append(rowElement);
     }
+
+    elements.atlasGrid.dataset.petId = pet.id;
   }
+
+  updateAtlasSelection();
+}
+
+function updateAtlasSelection() {
+  const state = getActiveState();
+  elements.atlasGrid.querySelectorAll(".atlas-cell.active").forEach((cell) => {
+    cell.classList.remove("active");
+  });
+  const activeCell = elements.atlasGrid.querySelector(
+    `.atlas-cell[data-row="${state.row}"][data-col="${app.frame}"]`,
+  );
+  activeCell?.classList.add("active");
 }
 
 function updateMousePreview(event) {
@@ -641,25 +765,32 @@ function updateMousePreview(event) {
   elements.mouseReticle.style.left = `${event.clientX - rect.left}px`;
   elements.mouseReticle.style.top = `${event.clientY - rect.top}px`;
 
-  if (distance < 24) {
+  if (distance < 42) {
     app.stateId = "idle";
-    app.frame = 0;
+    app.frame = getFrameIndexes(STATES[0], getActivePet())[0] || 0;
+    elements.directionReadout.value = "Neutral";
   } else {
     const degrees = normalizeDegrees((Math.atan2(dy, dx) * 180) / Math.PI + 90);
     const directionIndex = Math.round(degrees / 22.5) % 16;
     app.stateId = directionIndex < 8 ? "look-a" : "look-b";
     app.frame = directionIndex % 8;
+    elements.directionReadout.value = `${DIRECTION_NAMES[directionIndex]} · ${DIRECTION_LABELS[directionIndex]}°`;
   }
 
   renderFrameStrip();
-  renderAtlas();
+  updateAtlasSelection();
   drawCurrentFrame();
 }
 
 function selectCell(row, col) {
-  const state = STATES.find((candidate) => candidate.row === row) || STATES[0];
+  const state = STATES.find((candidate) => candidate.row === row);
+  if (!state) return;
+
   app.stateId = state.id;
-  app.frame = Math.min(col, state.frames - 1);
+  app.frame = col;
+  app.playing = false;
+  app.lastTick = performance.now();
+  elements.playButton.textContent = "Play";
   renderAll();
 }
 
@@ -673,6 +804,7 @@ function drawCurrentFrame() {
 
 function drawFrameToContext(targetCtx, pet, row, frame) {
   targetCtx.clearRect(0, 0, CELL_WIDTH, CELL_HEIGHT);
+  if (row >= pet.rows || frame >= pet.columns) return;
   targetCtx.drawImage(
     pet.image,
     frame * CELL_WIDTH,
@@ -688,22 +820,60 @@ function drawFrameToContext(targetCtx, pet, row, frame) {
 
 function sizePreviewCanvas() {
   elements.previewCanvas.style.width = `${CELL_WIDTH * app.zoom}px`;
-  elements.previewCanvas.style.height = `${CELL_HEIGHT * app.zoom}px`;
-  elements.zoomOutput.value = `${app.zoom}x`;
+  elements.previewCanvas.style.height = "auto";
+  elements.zoomOutput.value = formatMultiplier(app.zoom);
 }
 
 function animationLoop(timestamp) {
-  const interval = 1000 / app.fps;
-  if (app.playing && timestamp - app.lastTick >= interval) {
-    app.lastTick = timestamp;
+  if (app.playing && !app.mousePreview) {
     const state = getActiveState();
-    app.frame = (app.frame + 1) % state.frames;
-    renderFrameStrip();
-    renderAtlas();
-    drawCurrentFrame();
+    const pet = getActivePet();
+    const frameIndexes = getFrameIndexes(state, pet);
+    const elapsed = timestamp - app.lastTick;
+    const duration = getCurrentFrameDuration(state, frameIndexes) / app.speed;
+
+    if (elapsed >= duration) {
+      app.lastTick = timestamp;
+      const currentIndex = Math.max(0, frameIndexes.indexOf(app.frame));
+      app.frame = frameIndexes[(currentIndex + 1) % frameIndexes.length];
+      renderFrameStrip();
+      updateAtlasSelection();
+      drawCurrentFrame();
+    }
   }
 
   app.animationHandle = requestAnimationFrame(animationLoop);
+}
+
+function getCurrentFrameDuration(state, frameIndexes) {
+  if (!state.durations?.length) return 140;
+  const position = Math.max(0, frameIndexes.indexOf(app.frame));
+  return state.durations[Math.min(position, state.durations.length - 1)];
+}
+
+function getFrameIndexes(state, pet) {
+  const detected = pet.frameIndexesByRow?.[state.row];
+  if (detected?.length) return detected;
+
+  const count = Math.min(state.defaultFrames, pet.columns, COLUMNS);
+  return Array.from({ length: count }, (_, index) => index);
+}
+
+function ensureActiveFrame() {
+  const frameIndexes = getFrameIndexes(getActiveState(), getActivePet());
+  if (!frameIndexes.includes(app.frame)) app.frame = frameIndexes[0] || 0;
+}
+
+function updatePreviewReadouts(state, frameIndexes) {
+  const position = Math.max(0, frameIndexes.indexOf(app.frame));
+  if (state.row >= 9) {
+    const directionIndex = (state.row - 9) * COLUMNS + app.frame;
+    elements.stateReadout.textContent = `Look ${DIRECTION_LABELS[directionIndex]}°`;
+    elements.frameReadout.textContent = DIRECTION_NAMES[directionIndex];
+  } else {
+    elements.stateReadout.textContent = state.label;
+    elements.frameReadout.textContent = `Frame ${position + 1} / ${frameIndexes.length}`;
+  }
 }
 
 function getActivePet() {
@@ -715,7 +885,10 @@ function getActiveState() {
 }
 
 function getFrameLabel(state, index) {
-  if (state.row >= 9) return `${state.label}: ${DIRECTION_LABELS[(state.row - 9) * COLUMNS + index]}`;
+  if (state.row >= 9) {
+    const directionIndex = (state.row - 9) * COLUMNS + index;
+    return `${DIRECTION_NAMES[directionIndex]} ${DIRECTION_LABELS[directionIndex]}°`;
+  }
   return `${state.label}: frame ${index + 1}`;
 }
 
@@ -733,8 +906,20 @@ function loadImage(src, useCors = false) {
   });
 }
 
+async function loadRemoteImage(src) {
+  try {
+    return await loadImage(src, true);
+  } catch {
+    return loadImage(src);
+  }
+}
+
 function normalizeDegrees(degrees) {
   return ((degrees % 360) + 360) % 360;
+}
+
+function formatMultiplier(value) {
+  return `${Number(value).toFixed(Number(value) % 1 === 0 ? 0 : 2).replace(/0$/, "")}x`;
 }
 
 function slugify(value) {
