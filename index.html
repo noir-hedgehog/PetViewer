@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Codex Pet Viewer</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <aside class="sidebar" aria-label="Pet browser">
+        <div class="brand">
+          <div class="brand-mark" aria-hidden="true">PV</div>
+          <div>
+            <h1>Pet Viewer</h1>
+            <p>Codex atlas previewer</p>
+          </div>
+        </div>
+
+        <section class="import-panel" aria-label="Import pets">
+          <form class="url-import" id="urlImport">
+            <label for="urlInput">Pet JSON URL</label>
+            <div>
+              <input id="urlInput" type="url" placeholder="https://..." />
+              <button type="submit">Load</button>
+            </div>
+          </form>
+
+          <label class="drop-zone" id="dropZone">
+            <input id="directoryInput" type="file" webkitdirectory multiple />
+            <span class="drop-icon" aria-hidden="true">+</span>
+            <strong>Open pet folder</strong>
+            <small>Choose a folder with pet.json and spritesheet.webp/png</small>
+          </label>
+
+          <label class="secondary-upload">
+            <input id="fileInput" type="file" multiple accept=".json,.png,.webp" />
+            Add loose files
+          </label>
+        </section>
+
+        <section aria-label="Loaded pets">
+          <div class="section-heading">
+            <h2>Pets</h2>
+            <span id="petCount">1</span>
+          </div>
+          <div class="pet-list" id="petList"></div>
+        </section>
+      </aside>
+
+      <section class="workspace">
+        <header class="toolbar" aria-label="Preview controls">
+          <div class="select-wrap">
+            <label for="stateSelect">State</label>
+            <select id="stateSelect"></select>
+          </div>
+
+          <div class="control-group" role="group" aria-label="Playback">
+            <button id="playButton" type="button" title="Play or pause animation" aria-label="Play or pause">Pause</button>
+            <label class="compact-control" for="speedRange">
+              <span>FPS</span>
+              <input id="speedRange" type="range" min="1" max="24" value="8" />
+              <output id="speedOutput">8</output>
+            </label>
+          </div>
+
+          <div class="control-group" role="group" aria-label="View options">
+            <label class="compact-control" for="zoomRange">
+              <span>Zoom</span>
+              <input id="zoomRange" type="range" min="1" max="4" step="0.25" value="2" />
+              <output id="zoomOutput">2x</output>
+            </label>
+            <button id="checkerButton" type="button" aria-pressed="true" title="Toggle checkerboard background">Grid</button>
+          </div>
+        </header>
+
+        <section class="action-panel" aria-label="Manual Codex action triggers">
+          <div class="section-heading">
+            <h2>Actions</h2>
+            <span>Manual trigger</span>
+          </div>
+          <div class="action-grid" id="actionGrid"></div>
+        </section>
+
+        <div class="content-grid">
+          <section class="preview-panel" aria-label="Current pet preview">
+            <div class="preview-stage checker" id="previewStage">
+              <canvas id="previewCanvas" width="192" height="208"></canvas>
+              <div class="mouse-reticle" id="mouseReticle" aria-hidden="true"></div>
+            </div>
+            <div class="frame-strip" id="frameStrip" aria-label="Frames"></div>
+          </section>
+
+          <aside class="details-panel" aria-label="Pet details">
+            <div>
+              <p class="eyebrow" id="petId">sample-pet</p>
+              <h2 id="petName">Sample Pet</h2>
+              <p id="petDescription">A generated sample atlas for trying the viewer.</p>
+            </div>
+
+            <dl class="meta-grid" id="metaGrid"></dl>
+
+            <div class="status-list" id="statusList"></div>
+          </aside>
+        </div>
+
+        <section class="atlas-section" aria-label="Spritesheet atlas">
+          <div class="section-heading">
+            <h2>Atlas</h2>
+            <span id="atlasSize">1536 x 2288</span>
+          </div>
+          <div class="atlas-scroll">
+            <div class="atlas-grid checker" id="atlasGrid"></div>
+          </div>
+        </section>
+      </section>
+    </main>
+
+    <script src="app.js"></script>
+  </body>
+</html>
