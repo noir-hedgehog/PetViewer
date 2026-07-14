@@ -1,6 +1,6 @@
 # Codex Pet Viewer
 
-A tiny static browser for Codex pet atlases. It loads `pet.json` plus `spritesheet.webp` or `spritesheet.png`, previews each animation row, and checks the basic atlas contract. The bundled Noir v2 pet is shown by default.
+A tiny static browser for Codex pet atlases. It loads `pet.json` plus `spritesheet.webp` or `spritesheet.png`, previews each animation row, and checks the basic atlas contract. Noir and Manqu are bundled as presets, with Noir shown by default.
 
 ## Use
 
@@ -40,6 +40,9 @@ Standard animation rows use their Codex frame counts and timing, including short
 
 This tool only previews and validates dimensions; it does not generate, repair, or package pets.
 
-## Bundled Pet
+## Bundled Pets
 
-Noir is bundled from [noir-hedgehog/about-noir](https://github.com/noir-hedgehog/about-noir) and remains a regular Codex v2 package under `assets/noir/`. It is loaded through the same manifest and atlas path used by imported pets.
+- Noir is bundled from [noir-hedgehog/about-noir](https://github.com/noir-hedgehog/about-noir) under `assets/noir/`.
+- Manqu is bundled from the local Codex custom pet package under `assets/manqu/`.
+
+Both remain regular Codex v2 packages and are loaded through the same manifest and atlas paths used by imported pets.

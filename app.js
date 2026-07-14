@@ -122,14 +122,30 @@ const DIRECTION_NAMES = [
   "Up-left",
 ];
 
-const DEFAULT_PET = {
-  id: "noir",
-  displayName: "Noir",
-  description:
-    "A sweet, quietly mischievous black-and-cream hedgehog with luminous golden eyes and tiny paws.",
-  spriteVersionNumber: 2,
-  spritesheetPath: "spritesheet.webp",
-};
+const BUNDLED_PETS = [
+  {
+    manifestPath: "assets/noir/pet.json",
+    fallbackManifest: {
+      id: "noir",
+      displayName: "Noir",
+      description:
+        "A sweet, quietly mischievous black-and-cream hedgehog with luminous golden eyes and tiny paws.",
+      spriteVersionNumber: 2,
+      spritesheetPath: "spritesheet.webp",
+    },
+  },
+  {
+    manifestPath: "assets/manqu/pet.json",
+    fallbackManifest: {
+      id: "manqu",
+      displayName: "Manqu",
+      description:
+        "A gray-haired chibi character with a soft worm-like body, blinking at rest and wriggling while moving.",
+      spriteVersionNumber: 2,
+      spritesheetPath: "spritesheet.webp",
+    },
+  },
+];
 
 const elements = {
   urlImport: document.querySelector("#urlImport"),
@@ -186,11 +202,7 @@ async function initialize() {
   wireEvents();
   let animationStarted = false;
 
-  try {
-    await addDefaultPet();
-  } catch (error) {
-    showStatusMessage(error.message, "fail");
-  }
+  await addBundledPets();
 
   if (app.pets[0]) {
     selectPet(app.pets[0].id);
@@ -330,9 +342,19 @@ function wireEvents() {
   });
 }
 
-async function addDefaultPet() {
-  const manifestUrl = new URL("assets/noir/pet.json", window.location.href);
-  let manifest = DEFAULT_PET;
+async function addBundledPets() {
+  for (const bundledPet of BUNDLED_PETS) {
+    try {
+      await addBundledPet(bundledPet);
+    } catch (error) {
+      showStatusMessage(`Could not load bundled pet: ${error.message}`, "fail");
+    }
+  }
+}
+
+async function addBundledPet({ manifestPath, fallbackManifest }) {
+  const manifestUrl = new URL(manifestPath, window.location.href);
+  let manifest = fallbackManifest;
 
   try {
     const response = await fetch(manifestUrl);
