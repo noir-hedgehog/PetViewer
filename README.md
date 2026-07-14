@@ -1,5 +1,7 @@
 # Codex Pet Viewer
 
+[English](README.md) | [简体中文](README.zh-CN.md)
+
 A tiny static browser for Codex pet atlases. It loads `pet.json` plus `spritesheet.webp` or `spritesheet.png`, previews each animation row, and checks the basic atlas contract. Noir and Manqu are bundled as presets, with Noir shown by default.
 
 ## Use
