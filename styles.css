@@ -367,6 +367,79 @@ input:focus-visible,
   line-height: 1.45;
 }
 
+.pet-header-side {
+  display: grid;
+  flex: 0 0 auto;
+  justify-items: end;
+  gap: 10px;
+}
+
+.header-tools {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.language-switch {
+  display: grid;
+  grid-template-columns: 48px 38px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  background: var(--surface);
+}
+
+.language-option {
+  min-height: 32px;
+  border: 0;
+  border-right: 1px solid var(--line);
+  border-radius: 0;
+  padding: 0 8px;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.language-option:last-child {
+  border-right: 0;
+}
+
+.language-option.active {
+  background: var(--accent-soft);
+  color: #075f58;
+}
+
+.github-star-link {
+  display: inline-flex;
+  min-height: 34px;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  background: var(--surface);
+  padding: 0 10px;
+  color: var(--ink);
+  text-decoration: none;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.github-star-link:hover {
+  border-color: var(--accent);
+}
+
+.github-star-link:focus-visible {
+  outline: 3px solid rgba(208, 154, 39, 0.42);
+  outline-offset: 2px;
+}
+
+.star-icon {
+  color: var(--gold);
+  font-size: 17px;
+  line-height: 1;
+}
+
 .pet-badges {
   display: flex;
   flex-wrap: wrap;
@@ -793,11 +866,6 @@ select {
   display: none;
 }
 
-.atlas-cell.active {
-  z-index: 1;
-  box-shadow: inset 0 0 0 2px var(--danger);
-}
-
 .atlas-cell canvas {
   position: relative;
   z-index: 1;
@@ -805,7 +873,7 @@ select {
   height: 78px;
 }
 
-@media (max-width: 1120px) {
+@media (max-width: 1200px) {
   .app-shell {
     grid-template-columns: 250px minmax(0, 1fr);
   }
@@ -896,6 +964,16 @@ select {
 
   .pet-title h2 {
     font-size: 25px;
+  }
+
+  .pet-header-side {
+    width: 100%;
+    justify-items: start;
+  }
+
+  .header-tools {
+    width: 100%;
+    justify-content: flex-start;
   }
 
   .pet-badges {

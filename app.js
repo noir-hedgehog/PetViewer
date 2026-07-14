@@ -4,6 +4,189 @@ const COLUMNS = 8;
 const V2_ROWS = 11;
 const V1_ROWS = 9;
 
+const TRANSLATIONS = {
+  en: {
+    pageTitle: "Codex Pet Viewer",
+    metaDescription: "Preview Codex pet animations, look directions, and atlas files in the browser.",
+    petLibrary: "Pet library",
+    loadedPets: "Loaded pets",
+    importPets: "Import pets",
+    petFormat: "Pet format",
+    currentPetPreview: "Current pet preview",
+    animationFrames: "Animation frames",
+    previewControls: "Preview controls",
+    actionTriggers: "Manual Codex action triggers",
+    viewOptions: "View options",
+    petDetails: "Pet details",
+    spritesheetAtlas: "Spritesheet atlas",
+    pageActions: "Page actions",
+    language: "Language",
+    githubStarAria: "Star PetViewer on GitHub",
+    brandSubtitle: "for Codex pets",
+    library: "Library",
+    import: "Import",
+    localOrUrl: "Local or URL",
+    openFolder: "Open pet folder",
+    addFiles: "Add loose files",
+    petJsonUrl: "Pet JSON URL",
+    load: "Load",
+    cellSize: "192 x 208 cells",
+    livePreview: "Live preview",
+    actions: "Actions",
+    playback: "Playback",
+    play: "Play",
+    pause: "Pause",
+    playPauseTitle: "Play or pause animation",
+    playPauseAria: "Play or pause",
+    speed: "Speed",
+    state: "State",
+    view: "View",
+    checkerTitle: "Toggle checkerboard background",
+    gridOn: "Grid on",
+    gridOff: "Grid off",
+    zoom: "Zoom",
+    frameMap: "Frame map",
+    atlasInspector: "Atlas inspector",
+    githubStar: "GitHub Star",
+    petCountOne: "{count} pet",
+    petCountMany: "{count} pets",
+    atlasBadge: "{columns} x {rows} atlas",
+    standard: "Standard",
+    metaCell: "Cell",
+    metaFrames: "Frames",
+    metaRows: "Rows",
+    metaImage: "Image",
+    statusWidthOk: "Width matches the 8-column Codex atlas.",
+    statusWidthFail: "Width does not match 8 columns of 192px cells.",
+    statusHeightOk: "Height matches the v{version} row contract.",
+    statusHeightWarn: "Detected {rows} rows; expected {expected}.",
+    statusFramesOk: "Transparent slots are excluded from playback.",
+    statusFramesWarn: "Using standard frame counts; pixel inspection was unavailable.",
+    triggerState: "Trigger {state}",
+    frames: "{count} frames",
+    directions: "{count} directions",
+    row: "Row {row}",
+    rowMeta: "Row {row} · {meta}",
+    rowFrame: "Row {row}, frame {frame}",
+    neutral: "Neutral",
+    look: "Look {degrees}°",
+    frameReadout: "Frame {current} / {total}",
+    frameLabel: "{state}: frame {frame}",
+    noPetFiles: "No pet.json or spritesheet image was found.",
+    bundledLoadError: "Could not load bundled pet: {message}",
+    "state.idle": "Idle",
+    "state.running-right": "Running right",
+    "state.running-left": "Running left",
+    "state.waving": "Waving",
+    "state.jumping": "Jumping",
+    "state.failed": "Failed",
+    "state.waiting": "Waiting",
+    "state.running": "Working",
+    "state.review": "Review",
+    "state.look-a": "Look 000-157.5",
+    "state.look-b": "Look 180-337.5",
+    "action.idle": "Idle",
+    "action.running-right": "Right",
+    "action.running-left": "Left",
+    "action.waving": "Wave",
+    "action.jumping": "Jump",
+    "action.failed": "Fail",
+    "action.waiting": "Wait",
+    "action.running": "Work",
+    "action.review": "Review",
+  },
+  zh: {
+    pageTitle: "Codex 宠物预览器",
+    metaDescription: "在浏览器中预览 Codex 宠物动作、朝向和图集文件。",
+    petLibrary: "宠物库",
+    loadedPets: "已加载的宠物",
+    importPets: "导入宠物",
+    petFormat: "宠物格式",
+    currentPetPreview: "当前宠物预览",
+    animationFrames: "动画帧",
+    previewControls: "预览控制",
+    actionTriggers: "手动触发 Codex 动作",
+    viewOptions: "视图选项",
+    petDetails: "宠物详情",
+    spritesheetAtlas: "精灵图集",
+    pageActions: "页面操作",
+    language: "语言",
+    githubStarAria: "在 GitHub 上为 PetViewer 点 Star",
+    brandSubtitle: "Codex 宠物预览器",
+    library: "宠物库",
+    import: "导入",
+    localOrUrl: "本地或链接",
+    openFolder: "打开宠物文件夹",
+    addFiles: "添加单个文件",
+    petJsonUrl: "宠物 JSON 链接",
+    load: "加载",
+    cellSize: "192 x 208 单元格",
+    livePreview: "实时预览",
+    actions: "动作",
+    playback: "播放",
+    play: "播放",
+    pause: "暂停",
+    playPauseTitle: "播放或暂停动画",
+    playPauseAria: "播放或暂停",
+    speed: "速度",
+    state: "状态",
+    view: "视图",
+    checkerTitle: "切换棋盘格背景",
+    gridOn: "网格开",
+    gridOff: "网格关",
+    zoom: "缩放",
+    frameMap: "帧图谱",
+    atlasInspector: "图集检查器",
+    githubStar: "GitHub Star",
+    petCountOne: "{count} 个宠物",
+    petCountMany: "{count} 个宠物",
+    atlasBadge: "{columns} x {rows} 图集",
+    standard: "标准",
+    metaCell: "单元格",
+    metaFrames: "帧数",
+    metaRows: "行数",
+    metaImage: "图像",
+    statusWidthOk: "宽度符合 Codex 8 列图集规范。",
+    statusWidthFail: "宽度不符合 8 列、每格 192px 的规范。",
+    statusHeightOk: "高度符合 v{version} 行数规范。",
+    statusHeightWarn: "检测到 {rows} 行，预期为 {expected} 行。",
+    statusFramesOk: "播放时已排除透明空帧。",
+    statusFramesWarn: "无法检查像素，当前使用标准帧数。",
+    triggerState: "触发{state}",
+    frames: "{count} 帧",
+    directions: "{count} 个朝向",
+    row: "第 {row} 行",
+    rowMeta: "第 {row} 行 · {meta}",
+    rowFrame: "第 {row} 行，第 {frame} 帧",
+    neutral: "中立",
+    look: "朝向 {degrees}°",
+    frameReadout: "第 {current} / {total} 帧",
+    frameLabel: "{state}：第 {frame} 帧",
+    noPetFiles: "未找到 pet.json 或精灵图文件。",
+    bundledLoadError: "无法加载预设宠物：{message}",
+    "state.idle": "待机",
+    "state.running-right": "向右移动",
+    "state.running-left": "向左移动",
+    "state.waving": "挥手",
+    "state.jumping": "跳跃",
+    "state.failed": "失败",
+    "state.waiting": "等待",
+    "state.running": "工作中",
+    "state.review": "审查",
+    "state.look-a": "朝向 000-157.5",
+    "state.look-b": "朝向 180-337.5",
+    "action.idle": "待机",
+    "action.running-right": "向右",
+    "action.running-left": "向左",
+    "action.waving": "挥手",
+    "action.jumping": "跳跃",
+    "action.failed": "失败",
+    "action.waiting": "等待",
+    "action.running": "工作",
+    "action.review": "审查",
+  },
+};
+
 const STATES = [
   {
     id: "idle",
@@ -103,24 +286,44 @@ const DIRECTION_LABELS = [
   "337.5",
 ];
 
-const DIRECTION_NAMES = [
-  "Up",
-  "Up-right",
-  "Up-right",
-  "Up-right",
-  "Right",
-  "Down-right",
-  "Down-right",
-  "Down-right",
-  "Down",
-  "Down-left",
-  "Down-left",
-  "Down-left",
-  "Left",
-  "Up-left",
-  "Up-left",
-  "Up-left",
-];
+const DIRECTION_NAMES = {
+  en: [
+    "Up",
+    "Up-right",
+    "Up-right",
+    "Up-right",
+    "Right",
+    "Down-right",
+    "Down-right",
+    "Down-right",
+    "Down",
+    "Down-left",
+    "Down-left",
+    "Down-left",
+    "Left",
+    "Up-left",
+    "Up-left",
+    "Up-left",
+  ],
+  zh: [
+    "上",
+    "右上",
+    "右上",
+    "右上",
+    "右",
+    "右下",
+    "右下",
+    "右下",
+    "下",
+    "左下",
+    "左下",
+    "左下",
+    "左",
+    "左上",
+    "左上",
+    "左上",
+  ],
+};
 
 const BUNDLED_PETS = [
   {
@@ -178,6 +381,7 @@ const elements = {
   statusList: document.querySelector("#statusList"),
   atlasSize: document.querySelector("#atlasSize"),
   atlasGrid: document.querySelector("#atlasGrid"),
+  languageButtons: [...document.querySelectorAll(".language-option")],
 };
 
 const ctx = elements.previewCanvas.getContext("2d");
@@ -191,6 +395,7 @@ const app = {
   speed: 1,
   zoom: 2,
   checker: true,
+  language: getInitialLanguage(),
   mousePreview: null,
   lastTick: 0,
   animationHandle: 0,
@@ -200,6 +405,7 @@ initialize();
 
 async function initialize() {
   wireEvents();
+  applyLanguage();
   let animationStarted = false;
 
   await addBundledPets();
@@ -220,7 +426,81 @@ async function initialize() {
   }
 }
 
+function getInitialLanguage() {
+  try {
+    const savedLanguage = localStorage.getItem("pet-viewer-language");
+    if (savedLanguage === "en" || savedLanguage === "zh") return savedLanguage;
+  } catch {
+    // Local file previews can deny storage access.
+  }
+
+  return navigator.language.toLowerCase().startsWith("zh") ? "zh" : "en";
+}
+
+function setLanguage(language) {
+  if (language !== "en" && language !== "zh") return;
+  app.language = language;
+
+  try {
+    localStorage.setItem("pet-viewer-language", language);
+  } catch {
+    // The switch still works for the current session without storage.
+  }
+
+  applyLanguage();
+}
+
+function applyLanguage() {
+  document.documentElement.lang = app.language === "zh" ? "zh-CN" : "en";
+  document.title = t("pageTitle");
+  document.querySelector('meta[name="description"]').content = t("metaDescription");
+
+  document.querySelectorAll("[data-i18n]").forEach((element) => {
+    element.textContent = t(element.dataset.i18n);
+  });
+  document.querySelectorAll("[data-i18n-aria-label]").forEach((element) => {
+    element.setAttribute("aria-label", t(element.dataset.i18nAriaLabel));
+  });
+  document.querySelectorAll("[data-i18n-title]").forEach((element) => {
+    element.title = t(element.dataset.i18nTitle);
+  });
+
+  for (const button of elements.languageButtons) {
+    const isActive = button.dataset.language === app.language;
+    button.classList.toggle("active", isActive);
+    button.setAttribute("aria-pressed", String(isActive));
+  }
+
+  elements.playButton.textContent = t(app.playing ? "pause" : "play");
+  elements.checkerButton.textContent = t(app.checker ? "gridOn" : "gridOff");
+
+  if (app.pets.length) {
+    elements.atlasGrid.dataset.petId = "";
+    renderAll();
+  }
+}
+
+function t(key, params = {}) {
+  const template = TRANSLATIONS[app.language]?.[key] ?? TRANSLATIONS.en[key] ?? key;
+  return Object.entries(params).reduce(
+    (value, [name, replacement]) => value.replaceAll(`{${name}}`, String(replacement)),
+    template,
+  );
+}
+
+function getStateLabel(state) {
+  return t(`state.${state.id}`);
+}
+
+function getDirectionName(index) {
+  return DIRECTION_NAMES[app.language]?.[index] ?? DIRECTION_NAMES.en[index];
+}
+
 function wireEvents() {
+  for (const button of elements.languageButtons) {
+    button.addEventListener("click", () => setLanguage(button.dataset.language));
+  }
+
   elements.urlImport.addEventListener("submit", async (event) => {
     event.preventDefault();
     const url = elements.urlInput.value.trim();
@@ -273,7 +553,7 @@ function wireEvents() {
   elements.playButton.addEventListener("click", () => {
     app.playing = !app.playing;
     app.lastTick = performance.now();
-    elements.playButton.textContent = app.playing ? "Pause" : "Play";
+    elements.playButton.textContent = t(app.playing ? "pause" : "play");
   });
 
   elements.speedRange.addEventListener("input", () => {
@@ -292,7 +572,7 @@ function wireEvents() {
     elements.previewStage.classList.toggle("checker", app.checker);
     elements.atlasGrid.classList.toggle("plain", !app.checker);
     elements.checkerButton.setAttribute("aria-pressed", String(app.checker));
-    elements.checkerButton.textContent = app.checker ? "Grid on" : "Grid off";
+    elements.checkerButton.textContent = t(app.checker ? "gridOn" : "gridOff");
   });
 
   elements.previewStage.addEventListener("pointerenter", (event) => {
@@ -347,7 +627,7 @@ async function addBundledPets() {
     try {
       await addBundledPet(bundledPet);
     } catch (error) {
-      showStatusMessage(`Could not load bundled pet: ${error.message}`, "fail");
+      showStatusMessage(t("bundledLoadError", { message: error.message }), "fail");
     }
   }
 }
@@ -381,7 +661,7 @@ async function importFiles(files) {
   try {
     const imported = await buildPetsFromFiles(files);
     if (!imported.length) {
-      showStatusMessage("No pet.json or spritesheet image was found.", "warn");
+      showStatusMessage(t("noPetFiles"), "warn");
       return;
     }
 
@@ -569,7 +849,7 @@ function triggerAction(stateId) {
   app.frame = getFrameIndexes(state, pet)[0] || 0;
   app.playing = true;
   app.lastTick = performance.now();
-  elements.playButton.textContent = "Pause";
+  elements.playButton.textContent = t("pause");
   renderAll();
 }
 
@@ -582,17 +862,19 @@ function renderActionGrid() {
     const button = document.createElement("button");
     button.type = "button";
     button.className = `action-button${app.stateId === action.id ? " active" : ""}`;
-    button.title = `Trigger ${state.label}`;
+    button.title = t("triggerState", { state: getStateLabel(state) });
     button.disabled = state.row >= pet.rows;
     button.setAttribute("aria-pressed", String(app.stateId === action.id));
     button.addEventListener("click", () => triggerAction(action.id));
-    button.innerHTML = `<strong>${escapeHtml(action.label)}</strong>`;
+    button.innerHTML = `<strong>${escapeHtml(t(`action.${action.id}`))}</strong>`;
     elements.actionGrid.append(button);
   }
 }
 
 function renderPetList() {
-  elements.petCount.textContent = `${app.pets.length} ${app.pets.length === 1 ? "pet" : "pets"}`;
+  elements.petCount.textContent = t(app.pets.length === 1 ? "petCountOne" : "petCountMany", {
+    count: app.pets.length,
+  });
   elements.petList.innerHTML = "";
 
   for (const pet of app.pets) {
@@ -619,7 +901,7 @@ function renderDetails() {
   const availableStates = STATES.filter((state) => state.row < pet.rows);
 
   elements.stateSelect.innerHTML = availableStates
-    .map((state) => `<option value="${state.id}">${state.label}</option>`)
+    .map((state) => `<option value="${state.id}">${escapeHtml(getStateLabel(state))}</option>`)
     .join("");
 
   if (!availableStates.some((state) => state.id === app.stateId)) app.stateId = "idle";
@@ -634,17 +916,17 @@ function renderDetails() {
   const dimensionMatch = pet.columns === COLUMNS && pet.rows === expectedRows;
   elements.petBadges.innerHTML = [
     `<span class="badge ok">Codex v${pet.spriteVersionNumber}</span>`,
-    `<span class="badge${dimensionMatch ? " ok" : ""}">${pet.columns} x ${pet.rows} atlas</span>`,
+    `<span class="badge${dimensionMatch ? " ok" : ""}">${escapeHtml(t("atlasBadge", { columns: pet.columns, rows: pet.rows }))}</span>`,
   ].join("");
 
   const populatedCells = pet.frameIndexesByRow
     ? pet.frameIndexesByRow.reduce((total, indexes) => total + indexes.length, 0)
     : null;
   const meta = [
-    ["Cell", `${CELL_WIDTH} x ${CELL_HEIGHT}`],
-    ["Frames", populatedCells ?? "Standard"],
-    ["Rows", pet.rows],
-    ["Image", pet.spritesheetPath],
+    [t("metaCell"), `${CELL_WIDTH} x ${CELL_HEIGHT}`],
+    [t("metaFrames"), populatedCells ?? t("standard")],
+    [t("metaRows"), pet.rows],
+    [t("metaImage"), pet.spritesheetPath],
   ];
 
   elements.metaGrid.innerHTML = meta
@@ -664,21 +946,21 @@ function getAtlasStatuses(pet) {
   const statuses = [];
   statuses.push(
     pet.width === CELL_WIDTH * COLUMNS
-      ? { kind: "ok", text: "Width matches the 8-column Codex atlas." }
-      : { kind: "fail", text: "Width does not match 8 columns of 192px cells." },
+      ? { kind: "ok", text: t("statusWidthOk") }
+      : { kind: "fail", text: t("statusWidthFail") },
   );
 
   const expectedRows = pet.spriteVersionNumber >= 2 ? V2_ROWS : V1_ROWS;
   statuses.push(
     pet.rows === expectedRows
-      ? { kind: "ok", text: `Height matches the v${pet.spriteVersionNumber} row contract.` }
-      : { kind: "warn", text: `Detected ${pet.rows} rows; expected ${expectedRows}.` },
+      ? { kind: "ok", text: t("statusHeightOk", { version: pet.spriteVersionNumber }) }
+      : { kind: "warn", text: t("statusHeightWarn", { rows: pet.rows, expected: expectedRows }) },
   );
 
   statuses.push(
     pet.frameIndexesByRow
-      ? { kind: "ok", text: "Transparent slots are excluded from playback." }
-      : { kind: "warn", text: "Using standard frame counts; pixel inspection was unavailable." },
+      ? { kind: "ok", text: t("statusFramesOk") }
+      : { kind: "warn", text: t("statusFramesWarn") },
   );
 
   return statuses;
@@ -699,9 +981,8 @@ function renderFrameStrip() {
       app.frame = frameIndex;
       app.playing = false;
       app.lastTick = performance.now();
-      elements.playButton.textContent = "Play";
+      elements.playButton.textContent = t("play");
       renderFrameStrip();
-      updateAtlasSelection();
       drawCurrentFrame();
     });
 
@@ -732,9 +1013,9 @@ function renderAtlas() {
 
       const label = document.createElement("div");
       label.className = "atlas-row-label";
-      const rowName = state?.label || `Row ${row}`;
-      const rowMeta = row >= 9 ? `${frameIndexes.length} directions` : `${frameIndexes.length} frames`;
-      label.innerHTML = `<strong>${escapeHtml(rowName)}</strong><span>Row ${row} · ${rowMeta}</span>`;
+      const rowName = state ? getStateLabel(state) : t("row", { row });
+      const rowMeta = t(row >= 9 ? "directions" : "frames", { count: frameIndexes.length });
+      label.innerHTML = `<strong>${escapeHtml(rowName)}</strong><span>${escapeHtml(t("rowMeta", { row, meta: rowMeta }))}</span>`;
       rowElement.append(label);
 
       for (let col = 0; col < COLUMNS; col += 1) {
@@ -744,7 +1025,9 @@ function renderAtlas() {
         cell.dataset.row = String(row);
         cell.dataset.col = String(col);
         cell.dataset.frame = String(col);
-        cell.title = state ? getFrameLabel(state, col) : `Row ${row}, frame ${col + 1}`;
+        cell.title = state
+          ? getFrameLabel(state, col)
+          : t("rowFrame", { row, frame: col + 1 });
         cell.setAttribute("aria-label", cell.title);
         cell.addEventListener("click", () => selectCell(row, col));
 
@@ -762,18 +1045,6 @@ function renderAtlas() {
     elements.atlasGrid.dataset.petId = pet.id;
   }
 
-  updateAtlasSelection();
-}
-
-function updateAtlasSelection() {
-  const state = getActiveState();
-  elements.atlasGrid.querySelectorAll(".atlas-cell.active").forEach((cell) => {
-    cell.classList.remove("active");
-  });
-  const activeCell = elements.atlasGrid.querySelector(
-    `.atlas-cell[data-row="${state.row}"][data-col="${app.frame}"]`,
-  );
-  activeCell?.classList.add("active");
 }
 
 function updateMousePreview(event) {
@@ -790,17 +1061,16 @@ function updateMousePreview(event) {
   if (distance < 42) {
     app.stateId = "idle";
     app.frame = getFrameIndexes(STATES[0], getActivePet())[0] || 0;
-    elements.directionReadout.value = "Neutral";
+    elements.directionReadout.value = t("neutral");
   } else {
     const degrees = normalizeDegrees((Math.atan2(dy, dx) * 180) / Math.PI + 90);
     const directionIndex = Math.round(degrees / 22.5) % 16;
     app.stateId = directionIndex < 8 ? "look-a" : "look-b";
     app.frame = directionIndex % 8;
-    elements.directionReadout.value = `${DIRECTION_NAMES[directionIndex]} · ${DIRECTION_LABELS[directionIndex]}°`;
+    elements.directionReadout.value = `${getDirectionName(directionIndex)} · ${DIRECTION_LABELS[directionIndex]}°`;
   }
 
   renderFrameStrip();
-  updateAtlasSelection();
   drawCurrentFrame();
 }
 
@@ -812,7 +1082,7 @@ function selectCell(row, col) {
   app.frame = col;
   app.playing = false;
   app.lastTick = performance.now();
-  elements.playButton.textContent = "Play";
+  elements.playButton.textContent = t("play");
   renderAll();
 }
 
@@ -859,7 +1129,6 @@ function animationLoop(timestamp) {
       const currentIndex = Math.max(0, frameIndexes.indexOf(app.frame));
       app.frame = frameIndexes[(currentIndex + 1) % frameIndexes.length];
       renderFrameStrip();
-      updateAtlasSelection();
       drawCurrentFrame();
     }
   }
@@ -890,11 +1159,14 @@ function updatePreviewReadouts(state, frameIndexes) {
   const position = Math.max(0, frameIndexes.indexOf(app.frame));
   if (state.row >= 9) {
     const directionIndex = (state.row - 9) * COLUMNS + app.frame;
-    elements.stateReadout.textContent = `Look ${DIRECTION_LABELS[directionIndex]}°`;
-    elements.frameReadout.textContent = DIRECTION_NAMES[directionIndex];
+    elements.stateReadout.textContent = t("look", { degrees: DIRECTION_LABELS[directionIndex] });
+    elements.frameReadout.textContent = getDirectionName(directionIndex);
   } else {
-    elements.stateReadout.textContent = state.label;
-    elements.frameReadout.textContent = `Frame ${position + 1} / ${frameIndexes.length}`;
+    elements.stateReadout.textContent = getStateLabel(state);
+    elements.frameReadout.textContent = t("frameReadout", {
+      current: position + 1,
+      total: frameIndexes.length,
+    });
   }
 }
 
@@ -909,9 +1181,9 @@ function getActiveState() {
 function getFrameLabel(state, index) {
   if (state.row >= 9) {
     const directionIndex = (state.row - 9) * COLUMNS + index;
-    return `${DIRECTION_NAMES[directionIndex]} ${DIRECTION_LABELS[directionIndex]}°`;
+    return `${getDirectionName(directionIndex)} ${DIRECTION_LABELS[directionIndex]}°`;
   }
-  return `${state.label}: frame ${index + 1}`;
+  return t("frameLabel", { state: getStateLabel(state), frame: index + 1 });
 }
 
 function showStatusMessage(text, kind = "warn") {

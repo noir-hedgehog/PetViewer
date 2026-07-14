@@ -11,6 +11,8 @@ Open `index.html` in a browser.
 - Or drag loose `.json`, `.webp`, and `.png` files into the import area.
 - Move the mouse over the preview stage to inspect all 16 v2 look directions directly.
 - Trigger the default Codex actions manually from the action panel or number keys `1` through `9`.
+- Switch the full interface between Chinese and English from the header; the choice is remembered locally.
+- Open the GitHub repository directly from the header to leave a Star.
 - Use the state picker, frame strip, row-based atlas inspector, playback speed, zoom, and checkerboard toggle for manual inspection.
 - Transparent trailing slots are detected and excluded from playback. If pixel inspection is blocked by a remote host, the Codex standard frame counts are used instead.
 
