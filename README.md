@@ -6,7 +6,7 @@ A tiny static browser for Codex pet atlases. It loads `pet.json` plus `spriteshe
 
 ## Use
 
-Open `index.html` in a browser.
+Open `index.html` in a browser. [playground](https://noir-hedgehog.github.io/PetViewer/)。
 
 - Paste a `pet.json` URL and load it online. `spritesheetPath` is resolved relative to that JSON URL.
 - Choose a pet folder that contains `pet.json` and a spritesheet.
