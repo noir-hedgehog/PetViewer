@@ -359,6 +359,17 @@ const BUNDLED_PETS = [
       spritesheetPath: "spritesheet.webp",
     },
   },
+  {
+    manifestPath: "assets/yua/pet.json",
+    fallbackManifest: {
+      id: "yua",
+      displayName: "悠亚 Yua",
+      description:
+        "A clever and playful cosmic penguin whose plans to conquer Earth always end in adorable failure.",
+      spriteVersionNumber: 2,
+      spritesheetPath: "spritesheet.webp",
+    },
+  },
 ];
 
 const elements = {
