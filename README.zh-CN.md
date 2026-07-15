@@ -2,7 +2,7 @@
 
 [English](README.md) | [简体中文](README.zh-CN.md)
 
-一个轻量级的 Codex 宠物图集网页预览器。它可以加载 `pet.json` 和 `spritesheet.webp` 或 `spritesheet.png`，预览各行动画，并检查基础图集规范。项目内置 Noir 和 Manqu 两个预设宠物，默认显示 Noir。
+一个轻量级的 Codex 宠物图集网页预览器。它可以加载 `pet.json` 和 `spritesheet.webp` 或 `spritesheet.png`，预览各行动画，并检查基础图集规范。项目内置 Noir、Manqu、弥希 Miki 和悠亚 Yua 四个预设宠物，默认显示 Noir。
 
 ## 使用方式
 
@@ -48,5 +48,7 @@ https://<user>.github.io/PetViewer/?pet=https://raw.githubusercontent.com/<user>
 
 - Noir 来自 [noir-hedgehog/about-noir](https://github.com/noir-hedgehog/about-noir)，资源位于 `assets/noir/`。
 - Manqu 来自本地 Codex 自定义宠物包，资源位于 `assets/manqu/`。
+- 弥希 Miki 是以 VirtuaReal 角色弥希为原型制作的 Q 版宠物，资源位于 `assets/miki/`，包含全部标准动作与 v2 的 16 个朝向。
+- 悠亚 Yua 是以 VirtuaReal 角色悠亚为原型制作的 Q 版宠物，资源位于 `assets/yua/`，包含全部标准动作与 v2 的 16 个朝向。
 
-两者均保持标准 Codex v2 包结构，并通过与导入宠物相同的清单和图集路径加载。
+四个预设均保持标准 Codex v2 包结构，并通过与导入宠物相同的清单和图集路径加载。

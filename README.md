@@ -2,7 +2,7 @@
 
 [English](README.md) | [简体中文](README.zh-CN.md)
 
-A tiny static browser for Codex pet atlases. It loads `pet.json` plus `spritesheet.webp` or `spritesheet.png`, previews each animation row, and checks the basic atlas contract. Noir and Manqu are bundled as presets, with Noir shown by default.
+A tiny static browser for Codex pet atlases. It loads `pet.json` plus `spritesheet.webp` or `spritesheet.png`, previews each animation row, and checks the basic atlas contract. Noir, Manqu, Miki, and Yua are bundled as presets, with Noir shown by default.
 
 ## Use
 
@@ -48,5 +48,7 @@ This tool only previews and validates dimensions; it does not generate, repair, 
 
 - Noir is bundled from [noir-hedgehog/about-noir](https://github.com/noir-hedgehog/about-noir) under `assets/noir/`.
 - Manqu is bundled from the local Codex custom pet package under `assets/manqu/`.
+- Miki is a chibi interpretation of the VirtuaReal character 弥希, packaged under `assets/miki/` with all standard actions and 16 v2 look directions.
+- Yua is a chibi interpretation of the VirtuaReal character 悠亚, packaged under `assets/yua/` with all standard actions and 16 v2 look directions.
 
-Both remain regular Codex v2 packages and are loaded through the same manifest and atlas paths used by imported pets.
+All four remain regular Codex v2 packages and are loaded through the same manifest and atlas paths used by imported pets.

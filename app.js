@@ -348,6 +348,28 @@ const BUNDLED_PETS = [
       spritesheetPath: "spritesheet.webp",
     },
   },
+  {
+    manifestPath: "assets/miki/pet.json",
+    fallbackManifest: {
+      id: "miki",
+      displayName: "弥希 Miki",
+      description:
+        "The disciplined yet adorable vice president of Qingguang High School's student council.",
+      spriteVersionNumber: 2,
+      spritesheetPath: "spritesheet.webp",
+    },
+  },
+  {
+    manifestPath: "assets/yua/pet.json",
+    fallbackManifest: {
+      id: "yua",
+      displayName: "悠亚 Yua",
+      description:
+        "A clever and playful cosmic penguin whose plans to conquer Earth always end in adorable failure.",
+      spriteVersionNumber: 2,
+      spritesheetPath: "spritesheet.webp",
+    },
+  },
 ];
 
 const elements = {
