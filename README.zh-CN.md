@@ -2,7 +2,7 @@
 
 [English](README.md) | [简体中文](README.zh-CN.md)
 
-一个轻量级的 Codex 宠物图集网页预览器。它可以加载 `pet.json` 和 `spritesheet.webp` 或 `spritesheet.png`，预览各行动画，并检查基础图集规范。项目内置 Noir、Manqu、弥希 Miki 和悠亚 Yua 四个预设宠物，默认显示 Noir。
+一个轻量级的 Codex 宠物图集网页预览器。它可以加载 `pet.json` 和 `spritesheet.webp` 或 `spritesheet.png`，预览各行动画，并检查基础图集规范。项目内置 Noir、Manqu、弥希 Miki、悠亚 Yua、灰泽满 × 弥希双人版和弥希 × 灰泽满 CP 版六个预设宠物，默认显示 Noir。
 
 ## 使用方式
 
@@ -50,5 +50,7 @@ https://<user>.github.io/PetViewer/?pet=https://raw.githubusercontent.com/<user>
 - Manqu 来自本地 Codex 自定义宠物包，资源位于 `assets/manqu/`。
 - 弥希 Miki 是以 VirtuaReal 角色弥希为原型制作的 Q 版宠物，资源位于 `assets/miki/`，包含全部标准动作与 v2 的 16 个朝向。
 - 悠亚 Yua 是以 VirtuaReal 角色悠亚为原型制作的 Q 版宠物，资源位于 `assets/yua/`，包含全部标准动作与 v2 的 16 个朝向。
+- 灰泽满 × 弥希双人版是最初的协作互动版本，资源位于 `assets/hazel-miki-duo/`，包含巡查、打气、工作、休息和失败互动。
+- 弥希 × 灰泽满 CP 版是更亲密的前后辈版本，资源位于 `assets/miki-hazel-cp/`，包含九种场景互动和 16 个方向的 CP 姿势。
 
-四个预设均保持标准 Codex v2 包结构，并通过与导入宠物相同的清单和图集路径加载。
+六个预设均保持标准 Codex v2 包结构，并通过与导入宠物相同的清单和图集路径加载。
