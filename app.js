@@ -370,6 +370,28 @@ const BUNDLED_PETS = [
       spritesheetPath: "spritesheet.webp",
     },
   },
+  {
+    manifestPath: "assets/hazel-miki-duo/pet.json",
+    fallbackManifest: {
+      id: "hazel-miki-duo",
+      displayName: "灰泽满 × 弥希 Miki",
+      description:
+        "Hazel Man and Miki team up for patrols, encouragement, shared work, sleepy breaks, and cute failures.",
+      spriteVersionNumber: 2,
+      spritesheetPath: "spritesheet.webp",
+    },
+  },
+  {
+    manifestPath: "assets/miki-hazel-cp/pet.json",
+    fallbackManifest: {
+      id: "miki-hazel-cp",
+      displayName: "弥希 Miki × 灰泽满 · CP",
+      description:
+        "A close CP pet pairing cool, caring senior Miki with clingy junior Hazel through nine scenes and sixteen directional interactions.",
+      spriteVersionNumber: 2,
+      spritesheetPath: "spritesheet.webp",
+    },
+  },
 ];
 
 const elements = {

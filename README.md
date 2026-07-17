@@ -2,7 +2,7 @@
 
 [English](README.md) | [简体中文](README.zh-CN.md)
 
-A tiny static browser for Codex pet atlases. It loads `pet.json` plus `spritesheet.webp` or `spritesheet.png`, previews each animation row, and checks the basic atlas contract. Noir, Manqu, Miki, and Yua are bundled as presets, with Noir shown by default.
+A tiny static browser for Codex pet atlases. It loads `pet.json` plus `spritesheet.webp` or `spritesheet.png`, previews each animation row, and checks the basic atlas contract. Noir, Manqu, Miki, Yua, Hazel × Miki Duo, and Miki × Hazel CP are bundled as presets, with Noir shown by default.
 
 ## Use
 
@@ -50,5 +50,7 @@ This tool only previews and validates dimensions; it does not generate, repair, 
 - Manqu is bundled from the local Codex custom pet package under `assets/manqu/`.
 - Miki is a chibi interpretation of the VirtuaReal character 弥希, packaged under `assets/miki/` with all standard actions and 16 v2 look directions.
 - Yua is a chibi interpretation of the VirtuaReal character 悠亚, packaged under `assets/yua/` with all standard actions and 16 v2 look directions.
+- Hazel × Miki Duo is the original cooperative two-character pet, packaged under `assets/hazel-miki-duo/` with patrol, encouragement, work, rest, and failure interactions.
+- Miki × Hazel CP is the more intimate senior–junior version, packaged under `assets/miki-hazel-cp/` with nine scene-specific interactions and 16 directional CP poses.
 
-All four remain regular Codex v2 packages and are loaded through the same manifest and atlas paths used by imported pets.
+All six remain regular Codex v2 packages and are loaded through the same manifest and atlas paths used by imported pets.
